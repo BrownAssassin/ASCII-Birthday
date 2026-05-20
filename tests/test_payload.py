@@ -22,7 +22,7 @@ def test_payload_round_trip(tmp_path: Path) -> None:
     payload = read_payload_from_executable(exe)
     assert payload.name == "Avery"
     assert payload.age == 40
-    assert payload.greeting() == "Happy 40 Birthday Avery"
+    assert payload.greeting() == "Happy 40th Birthday Avery"
 
 
 def test_missing_payload_raises(tmp_path: Path) -> None:
@@ -45,3 +45,23 @@ def test_filename_sanitizes_windows_reserved_characters() -> None:
 def test_invalid_age_rejected(age: str) -> None:
     with pytest.raises(PayloadError):
         make_payload("Morgan", age)
+
+
+@pytest.mark.parametrize(
+    ("age", "expected"),
+    [
+        (1, "Happy 1st Birthday Morgan"),
+        (2, "Happy 2nd Birthday Morgan"),
+        (3, "Happy 3rd Birthday Morgan"),
+        (4, "Happy 4th Birthday Morgan"),
+        (11, "Happy 11th Birthday Morgan"),
+        (12, "Happy 12th Birthday Morgan"),
+        (13, "Happy 13th Birthday Morgan"),
+        (21, "Happy 21st Birthday Morgan"),
+        (22, "Happy 22nd Birthday Morgan"),
+        (23, "Happy 23rd Birthday Morgan"),
+        (111, "Happy 111th Birthday Morgan"),
+    ],
+)
+def test_greeting_uses_ordinal_age(age: int, expected: str) -> None:
+    assert BirthdayPayload(name="Morgan", age=age).greeting() == expected

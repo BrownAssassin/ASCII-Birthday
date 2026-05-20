@@ -24,8 +24,19 @@ class BirthdayPayload:
     age: int
     message_version: int = 1
 
+    def age_label(self) -> str:
+        return ordinal_age(self.age)
+
     def greeting(self) -> str:
-        return f"Happy {self.age} Birthday {self.name}"
+        return f"Happy {self.age_label()} Birthday {self.name}"
+
+
+def ordinal_age(age: int) -> str:
+    if 10 <= age % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(age % 10, "th")
+    return f"{age}{suffix}"
 
 
 def validate_name(name: str) -> str:

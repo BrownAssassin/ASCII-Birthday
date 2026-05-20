@@ -1,6 +1,6 @@
 # ASCII-Birthday
 
-ASCII-Birthday is a production-ready Windows app for creating personalized birthday executables.
+ASCII-Birthday is a standalone Windows app for generating personalized birthday executables.
 
 Open the generator, enter a name and age, choose where to save the file, and it creates a standalone `.exe` birthday card that can be sent to someone else. The generated app opens a terminal-style celebration window with large ASCII text, animated ASCII confetti, and closes when any key is pressed.
 
@@ -19,11 +19,15 @@ Ada_Lovelace_36_Birthday.exe
 Anshul_25_Birthday.exe
 ```
 
-When opened, the generated birthday app displays:
+When opened, the generated birthday app displays the age with its ordinal suffix:
 
 ```text
-Happy [age] Birthday [name]
+Happy [age suffix] Birthday [name]
 ```
+
+Example: `Happy 21st Birthday Jordan`
+
+in a terminal-style window with large ASCII text and animated ASCII confetti. The window closes when any key is pressed.
 
 ## How To Use
 

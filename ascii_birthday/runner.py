@@ -51,10 +51,26 @@ def load_payload() -> BirthdayPayload:
         return BirthdayPayload(name="Friend", age=100)
 
 
+def clean_ascii_block(block: str) -> list[str]:
+    lines = [line.rstrip() for line in block.splitlines()]
+    while lines and not lines[0]:
+        lines.pop(0)
+    while lines and not lines[-1]:
+        lines.pop()
+    return lines
+
+
 def render_ascii_message(payload: BirthdayPayload) -> str:
-    figlet = Figlet(font="standard", justify="center", width=140)
-    lines = [f"Happy {payload.age}", "Birthday", payload.name]
-    return "\n".join(figlet.renderText(line).rstrip() for line in lines)
+    figlet = Figlet(font="standard", width=180)
+    message_parts = [f"Happy {payload.age_label()}", "Birthday", payload.name]
+    lines: list[str] = []
+
+    for part in message_parts:
+        if lines:
+            lines.append("")
+        lines.extend(clean_ascii_block(figlet.renderText(part)))
+
+    return "\n".join(lines)
 
 
 def fit_ascii_font(root: tk.Tk, ascii_art: str) -> tuple[str, int, str]:
