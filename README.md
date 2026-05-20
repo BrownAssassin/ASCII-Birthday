@@ -1,24 +1,82 @@
 # ASCII-Birthday
 
-ASCII-Birthday is a standalone Windows generator for personalized birthday executables.
+ASCII-Birthday is a production-ready Windows app for creating personalized birthday executables.
 
-The generator asks for a name and age, then creates a birthday app named with this scheme:
+Open the generator, enter a name and age, choose where to save the file, and it creates a standalone `.exe` birthday card that can be sent to someone else. The generated app opens a terminal-style celebration window with large ASCII text, animated ASCII confetti, and closes when any key is pressed.
+
+## What It Creates
+
+Generated birthday files use this naming format:
 
 ```text
 [name]_[age]_Birthday.exe
 ```
 
-For example, `Ada Lovelace` turning `36` generates:
+Examples:
 
 ```text
 Ada_Lovelace_36_Birthday.exe
+Anshul_25_Birthday.exe
 ```
 
-The generated app opens a terminal-style window with large ASCII birthday text, animated ASCII confetti, and closes when any key is pressed.
+When opened, the generated birthday app displays:
+
+```text
+Happy [age] Birthday [name]
+```
+
+## How To Use
+
+1. Open `ASCIIBirthdayGenerator.exe`.
+2. Enter the birthday person's name.
+3. Enter their age.
+4. Choose the output folder.
+5. Select `Generate EXE`.
+6. Send or open the generated `[name]_[age]_Birthday.exe` file.
+
+The generated birthday file is standalone. It does not need Python, the generator, or any extra files to run.
+
+## Requirements
+
+For normal use:
+
+- Windows 10 or newer
+- `ASCIIBirthdayGenerator.exe`
+
+For generated birthday apps:
+
+- Windows 10 or newer
+- No installation required
+
+## Notes
+
+- The generated app closes when any key is pressed.
+- Names are cleaned automatically so the output filename is valid on Windows.
+- Ages must be whole numbers from `1` to `150`.
+- Windows SmartScreen may warn when opening unsigned executables. Choose `More info` and `Run anyway` if you trust the file.
+
+## Build From Source
+
+Developers can build the app locally with PowerShell:
+
+```powershell
+.\scripts\build.ps1
+```
+
+The build script creates a local Python virtual environment, installs pinned dependencies, runs tests, and packages both executables.
+
+Build outputs:
+
+```text
+dist\runner_stub.exe
+dist\ASCIIBirthdayGenerator.exe
+```
+
+`ASCIIBirthdayGenerator.exe` is the app to distribute. It includes `runner_stub.exe` internally and uses it to create personalized birthday executables.
 
 ## Development
 
-Run the tests:
+Run tests directly:
 
 ```powershell
 python -m venv .venv
@@ -26,59 +84,28 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Run the generator from source after building the runner stub:
+Run a fresh production build:
 
 ```powershell
 .\scripts\build.ps1
 .\dist\ASCIIBirthdayGenerator.exe
 ```
 
-## Build
+## Release Checklist
 
-Create both Windows executables:
-
-```powershell
-.\scripts\build.ps1
-```
-
-Outputs:
-
-```text
-dist\runner_stub.exe
-dist\ASCIIBirthdayGenerator.exe
-```
-
-`ASCIIBirthdayGenerator.exe` is the standalone app to distribute. It contains the reusable runner stub and generates personalized birthday `.exe` files without needing Python on the target machine.
-
-## Checkpoint Commits
-
-Use conventional commits for checkpointed progress:
-
-```text
-feat: add birthday payload embedding
-
-Add shared payload writer and reader logic for generated birthday executables.
-Validate names and ages, sanitize Windows filenames, and default generated
-files to the [name]_[age]_Birthday.exe naming scheme.
-```
-
-```text
-feat: render personalized ascii birthday window
-
-Add the terminal-style Tkinter runner window with large ASCII birthday text,
-animated ASCII confetti, and any-key close behavior.
-```
-
-```text
-feat: add standalone birthday exe generator
-
-Add the Tkinter generator app that asks for name, age, and output folder,
-then creates personalized birthday executables from the embedded runner stub.
-```
+Use conventional commits when documenting release work:
 
 ```text
 build: package ascii birthday generator
 
-Add the repeatable PowerShell build workflow that packages runner_stub.exe
-and ASCIIBirthdayGenerator.exe with PyInstaller.
+Package the standalone Windows generator and verify it creates working
+personalized birthday executables.
 ```
+
+Before sharing a release:
+
+- Run `.\scripts\build.ps1`
+- Confirm tests pass
+- Open `dist\ASCIIBirthdayGenerator.exe`
+- Generate a sample birthday executable
+- Open the generated birthday executable and confirm it displays the personalized message
