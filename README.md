@@ -1,8 +1,37 @@
 # ASCII-Birthday
 
+[![Release](https://img.shields.io/github/v/release/BrownAssassin/ASCII-Birthday?display_name=tag&label=release)](https://github.com/BrownAssassin/ASCII-Birthday/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows&logoColor=white)](#requirements)
+[![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![PyInstaller](https://img.shields.io/badge/packaged%20with-PyInstaller-5391FE)](https://pyinstaller.org/)
+[![Tests](https://img.shields.io/badge/tests-pytest-0A7F3F)](#development)
+
 ASCII-Birthday is a standalone Windows app for generating personalized birthday executables.
 
-Open the generator, enter a name and age, choose where to save the file, and it creates a standalone `.exe` birthday card that can be sent to someone else. The generated app opens a terminal-style celebration window with large ASCII text, animated ASCII confetti, and closes when any key is pressed.
+Open the generator, enter a name and age, choose where to save the file, and it creates a standalone `.exe` birthday card that can be sent to someone else. The generated app opens a terminal-style celebration window with large ASCII text, animated ASCII confetti, ordinal ages like `25th`, and closes when any key is pressed.
+
+## Download
+
+For non-developers, use the checked-in Windows app:
+
+```text
+release/windows/ASCIIBirthdayGenerator.exe
+```
+
+If you are browsing on GitHub, open [`release/windows/ASCIIBirthdayGenerator.exe`](release/windows/ASCIIBirthdayGenerator.exe), select `Download raw file`, then run the downloaded app on Windows.
+
+Once GitHub Releases are published, the recommended download location will be the [latest release](https://github.com/BrownAssassin/ASCII-Birthday/releases/latest).
+
+## How To Use
+
+1. Open `release/windows/ASCIIBirthdayGenerator.exe`.
+2. Enter the birthday person's name.
+3. Enter their age.
+4. Choose the output folder.
+5. Select `Generate EXE`.
+6. Send or open the generated birthday file.
+
+The generated birthday file is standalone. It does not need Python, the generator, or any extra files to run.
 
 ## What It Creates
 
@@ -19,33 +48,26 @@ Ada_Lovelace_36_Birthday.exe
 Anshul_25_Birthday.exe
 ```
 
-When opened, the generated birthday app displays the age with its ordinal suffix:
+When opened, the generated birthday app displays:
 
 ```text
 Happy [age suffix] Birthday [name]
 ```
 
-Example: `Happy 21st Birthday Jordan`
+Example:
 
-in a terminal-style window with large ASCII text and animated ASCII confetti. The window closes when any key is pressed.
+```text
+Happy 25th Birthday Anshul
+```
 
-## How To Use
-
-1. Open `ASCIIBirthdayGenerator.exe`.
-2. Enter the birthday person's name.
-3. Enter their age.
-4. Choose the output folder.
-5. Select `Generate EXE`.
-6. Send or open the generated `[name]_[age]_Birthday.exe` file.
-
-The generated birthday file is standalone. It does not need Python, the generator, or any extra files to run.
+The birthday window uses large centered ASCII text, animated ASCII confetti, and closes when any key is pressed.
 
 ## Requirements
 
 For normal use:
 
 - Windows 10 or newer
-- `ASCIIBirthdayGenerator.exe`
+- `release/windows/ASCIIBirthdayGenerator.exe`
 
 For generated birthday apps:
 
@@ -54,10 +76,10 @@ For generated birthday apps:
 
 ## Notes
 
-- The generated app closes when any key is pressed.
-- Names are cleaned automatically so the output filename is valid on Windows.
+- Names are cleaned automatically so generated filenames are valid on Windows.
 - Ages must be whole numbers from `1` to `150`.
 - Windows SmartScreen may warn when opening unsigned executables. Choose `More info` and `Run anyway` if you trust the file.
+- `release/windows/SHA256SUMS.txt` contains the SHA-256 checksum for the checked-in generator executable.
 
 ## Build From Source
 
@@ -66,8 +88,6 @@ Developers can build the app locally with PowerShell:
 ```powershell
 .\scripts\build.ps1
 ```
-
-The build script creates a local Python virtual environment, installs pinned dependencies, runs tests, and packages both executables.
 
 Build outputs:
 
@@ -88,28 +108,10 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Run a fresh production build:
+Prepare the checked-in distributable app for a stable release:
 
 ```powershell
-.\scripts\build.ps1
-.\dist\ASCIIBirthdayGenerator.exe
+.\scripts\prepare-release.ps1 -Version v1.0.0
 ```
 
-## Release Checklist
-
-Use conventional commits when documenting release work:
-
-```text
-build: package ascii birthday generator
-
-Package the standalone Windows generator and verify it creates working
-personalized birthday executables.
-```
-
-Before sharing a release:
-
-- Run `.\scripts\build.ps1`
-- Confirm tests pass
-- Open `dist\ASCIIBirthdayGenerator.exe`
-- Generate a sample birthday executable
-- Open the generated birthday executable and confirm it displays the personalized message
+See [docs/RELEASE.md](docs/RELEASE.md) for release steps, package guidance, and suggested GitHub repository metadata.
