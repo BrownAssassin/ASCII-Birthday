@@ -51,24 +51,27 @@ def load_payload() -> BirthdayPayload:
         return BirthdayPayload(name="Friend", age=100)
 
 
-def clean_ascii_block(block: str) -> list[str]:
-    lines = [line.rstrip() for line in block.splitlines()]
-    while lines and not lines[0]:
-        lines.pop(0)
-    while lines and not lines[-1]:
-        lines.pop()
-    return lines
+def normalize_ascii_block(block: str) -> list[str]:
+    lines = block.rstrip("\n").splitlines()
+    width = max(len(line) for line in lines)
+    return [line.ljust(width) for line in lines]
 
 
 def render_ascii_message(payload: BirthdayPayload) -> str:
     figlet = Figlet(font="standard", width=180)
     message_parts = [f"Happy {payload.age_label()}", "Birthday", payload.name]
+    blocks = [normalize_ascii_block(figlet.renderText(part)) for part in message_parts]
+    message_width = max(len(line) for block in blocks for line in block)
     lines: list[str] = []
 
-    for part in message_parts:
+    for block in blocks:
         if lines:
-            lines.append("")
-        lines.extend(clean_ascii_block(figlet.renderText(part)))
+            lines.append(" " * message_width)
+
+        block_width = max(len(line) for line in block)
+        left_padding = (message_width - block_width) // 2
+        right_padding = message_width - block_width - left_padding
+        lines.extend(f"{' ' * left_padding}{line}{' ' * right_padding}" for line in block)
 
     return "\n".join(lines)
 
@@ -109,10 +112,17 @@ class BirthdayWindow:
 
         self.payload = payload
         self.ascii_art = render_ascii_message(payload)
+        self.ascii_lines = self.ascii_art.splitlines()
         self.confetti = [self.make_piece(random.uniform(-WINDOW_HEIGHT, WINDOW_HEIGHT)) for _ in range(170)]
 
         self.root.update_idletasks()
         self.font = fit_ascii_font(self.root, self.ascii_art)
+        self.font_metrics = tkfont.Font(
+            root=self.root,
+            family=self.font[0],
+            size=self.font[1],
+            weight=self.font[2],
+        )
         self.draw()
 
     def make_piece(self, y: float | None = None) -> ConfettiPiece:
@@ -153,24 +163,8 @@ class BirthdayWindow:
                 piece.color = replacement.color
                 piece.size = replacement.size
 
-        self.canvas.create_text(
-            WINDOW_WIDTH // 2 + 4,
-            WINDOW_HEIGHT // 2 + 4,
-            text=self.ascii_art,
-            fill=TEXT_SHADOW,
-            font=self.font,
-            justify="center",
-            anchor="center",
-        )
-        self.canvas.create_text(
-            WINDOW_WIDTH // 2,
-            WINDOW_HEIGHT // 2,
-            text=self.ascii_art,
-            fill=TEXT_COLOR,
-            font=self.font,
-            justify="center",
-            anchor="center",
-        )
+        self.draw_ascii_art(WINDOW_WIDTH // 2 + 4, WINDOW_HEIGHT // 2 + 4, TEXT_SHADOW)
+        self.draw_ascii_art(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, TEXT_COLOR)
         self.canvas.create_text(
             WINDOW_WIDTH // 2,
             WINDOW_HEIGHT - 32,
@@ -180,6 +174,23 @@ class BirthdayWindow:
             anchor="center",
         )
         self.root.after(34, self.draw)
+
+    def draw_ascii_art(self, center_x: int, center_y: int, color: str) -> None:
+        line_height = self.font_metrics.metrics("linespace")
+        block_width = max(self.font_metrics.measure(line) for line in self.ascii_lines)
+        block_height = line_height * len(self.ascii_lines)
+        left = center_x - block_width / 2
+        top = center_y - block_height / 2
+
+        for index, line in enumerate(self.ascii_lines):
+            self.canvas.create_text(
+                left,
+                top + index * line_height,
+                text=line,
+                fill=color,
+                font=self.font,
+                anchor="nw",
+            )
 
     def run(self) -> None:
         self.root.mainloop()
